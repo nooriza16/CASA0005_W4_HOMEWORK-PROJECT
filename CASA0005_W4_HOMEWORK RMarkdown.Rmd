@@ -1,0 +1,43 @@
+---
+title: "CASA0005_W4_HOMEWORK"
+author: "Xiang Han"
+date: "2024-10-25"
+output: html_document
+---
+{r}
+#STEP1. READ IN DATA FILE
+library(tidyverse)
+GII2010<- read.csv("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/GII2010.csv")
+GII2019<- read.csv("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/GII2019.csv")
+library(sf)
+WorldMap<- st_read("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/World_Countries_(Generalized)_9029012925078512962.geojson")
+
+{r}
+#STEP2. DATA PRE-PROCESSING
+INDEX2010<-GII2010[,c(1,2,3,9,10)]
+INDEX2019<-GII2019[,c(1,2,3,9,10)]
+library(dplyr)
+colnames(INDEX2010)[4] <- "2010value"
+colnames(INDEX2019)[4] <- "2019value"
+INDEXCOMBINED <- left_join(INDEX2010,INDEX2019,by="country")
+INDEXCOMBINED <- INDEXCOMBINED[,c(1,2,4,7)]
+install.packages('countrycode')
+library(countrycode)
+WorldMap["iso3"] <- countrycode(WorldMap$ISO, origin="iso2c", destination="iso3c")
+
+{r}
+#STEP3. DATA JOINING
+WorldGIIMap <- WorldMap %>%
+  left_join(., INDEXCOMBINED, by = c("iso3" = "countryIsoCode.x"))
+cleaned_WorldGIIMap <- na.omit(WorldGIIMap)
+cleaned_WorldGIIMap <- cleaned_WorldGIIMap[,c(1,2,6,8,9)]
+cleaned_WorldGIIMap <- cleaned_WorldGIIMap %>%
+  mutate(diff = `2019value` - `2010value`)
+
+{r}
+#STEP4. PLOTTING
+library(tmap)
+library(tmaptools)  
+library(ggplot2)
+tmap_mode("plot")
+qtm(cleaned_WorldGIIMap, fill = "diff")
