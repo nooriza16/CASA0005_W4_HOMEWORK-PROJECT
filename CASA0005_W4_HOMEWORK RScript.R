@@ -2,6 +2,12 @@
 library(tidyverse)
 GII2010<- read.csv("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/GII2010.csv")
 GII2019<- read.csv("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/GII2019.csv")
+
+#1a. Adding sources so that it can be reproducible in another device
+GII_2010_209 <- read_csv("https://hdr.undp.org/sites/default/files/2023-24_HDR/HDR23-24_Composite_indices_complete_time_series.csv",
+         locale = locale(encoding = "latin1"),
+         na = "n/a")
+
 library(sf)
 WorldMap<- st_read("/Users/mac/Desktop/MSc Urban Spatial Science/CASA0005/W4/CASA0005_W4_HOMEWORK PROJECT/World_Countries_(Generalized)_9029012925078512962.geojson")
 
